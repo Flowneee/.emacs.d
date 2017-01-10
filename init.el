@@ -22,9 +22,11 @@
 ;(my:local_load "./settings/custom-functions.el")
 (my:local_load "./settings/speedbar.el")
 (my:local_load "./settings/helm.el")
+(my:local_load "./settings/purpose.el")
 (my:local_load "./settings/ui.el")
 (my:local_load "./settings/guru-mode.el")
 (my:local_load "./settings/web-mode.el")
+(my:local_load "./settings/hs-mode.el")
 (require 'projectile-speedbar)
 
 ;;; .init.el ends here

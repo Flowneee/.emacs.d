@@ -16,6 +16,9 @@
  '(nrepl-message-colors
    (quote
     ("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
+ '(package-selected-packages
+   (quote
+    (elisp-format helm-purpose window-purpose llvm-mode toml-mode markdown-mode yaml-mode zop-to-char zenburn-theme which-key web-mode volatile-highlights undo-tree steam sr-speedbar smex smartrep smartparens smart-mode-line slime rainbow-mode rainbow-delimiters racer projectile-speedbar pkgbuild-mode ov operate-on-number nyan-prompt nyan-mode move-text monokai-theme magit less-css-mode json-mode js2-mode imenu-anywhere ido-ubiquitous icicles helm-projectile helm-mt helm-flycheck helm-descbinds helm-company helm-ag guru-mode grizzl god-mode glsl-mode gitignore-mode gitconfig-mode git-timemachine gist geiser flymake-google-cpplint flycheck-ycmd flycheck-pyflakes flycheck-google-cpplint flycheck-cstyle flycheck-clangcheck flx-ido expand-region elisp-slime-nav easy-kill discover-my-major diminish diff-hl csv-mode company-anaconda cargo buffer-move browse-kill-ring beacon anzu ace-window)))
  '(safe-local-variable-values
    (quote
     ((pony-settings make-pony-project :python "/home/flowneee/Development/Projects/Python/dj-oes/env/bin/python" :pythonpath "/home/flowneee/Development/Projects/Python/dj-oes" :settings "project/project/settings.py"))))
