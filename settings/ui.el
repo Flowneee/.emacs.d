@@ -1,5 +1,7 @@
 ;;; ui.el --- Emacs UI vustomization.
-
+(require 'framemove)
+;;(windmove-default-keybindings)
+(setq framemove-hook-into-windmove t)
 ;;; Code:
 
 (defun my:toggle-window-dedicated ()

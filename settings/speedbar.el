@@ -4,7 +4,7 @@
 (require 'sr-speedbar)
 (setq speedbar-show-unknown-files t)
 (setq sr-speedbar-right-side nil)
-(setq sr-speedbar-width 30)
+(setq sr-speedbar-width 40)
 (setq speedbar-directory-unshown-regexp "^\\(CVS\\|RCS\\|SCCS\\|\\.\\.*$\\)\\'")
 
 (unless (display-graphic-p)

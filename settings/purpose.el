@@ -11,6 +11,9 @@
 (add-to-list 'purpose-user-mode-purposes '(shell-mode . edit))
 (add-to-list 'purpose-user-mode-purposes '(makefile-mode . edit))
 (add-to-list 'purpose-user-mode-purposes '(lisp-mode . edit))
+(add-to-list 'purpose-user-mode-purposes '(yaml-mode . edit))
+(add-to-list 'purpose-user-mode-purposes '(fundamental-mode . edit))
+(add-to-list 'purpose-user-mode-purposes '(systemd-mode . edit))
 
 ;;; Term modes
 (add-to-list 'purpose-user-mode-purposes '(term-mode . term))
