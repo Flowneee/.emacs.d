@@ -1,4 +1,0 @@
-;;;
-
-(package-initialize)
-(elpy-enable)
