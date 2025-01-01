@@ -32,47 +32,54 @@
 ;; Configure :delight (mode name hiding or customization) for use-package
 (use-package delight)
 
-;; Setup some UI global modes
-(column-number-mode t) ;; Show line and column in mode line
-(line-number-mode t)
-(global-display-line-numbers-mode t) ;; Show line number left from content
-(size-indication-mode t) ;; Show percentage in mode line
-(blink-cursor-mode -1)
-(global-hl-line-mode +1) ;; Highlight current line
-(menu-bar-mode -1) ;; Remove bars on top of window
-(tool-bar-mode -1)
-(setq use-short-answers t) ;; Allow y/n instead of yes/no in prompts
+(defun include-file (file-name)
+  "Include and execute file from relative to init.el location, appending .el"
+  (load (expand-file-name (concat user-emacs-directory file-name))))
 
+(defun recompile-package (package)
+  "Recompile a specific PACKAGE."
+  (interactive "sEnter package name: ") 
+  (let ((package-dir (or (locate-library package) 
+                         (error "Package not found")))) 
+    (byte-recompile-directory (file-name-directory package-dir) 0)
+    (message "Package %s recompiled." package)))
 
-;; Highlight text added by some operation
-(use-package volatile-highlights
+;; Prepare tree-sitter shared libs
+;; On Arch Linux some libs are also available in repos, but it is easier to install them
+;; all in one step regardless of distro.
+(defun setup-tree-sitter-libs ()
+  "Set up tree-sitter libraries by copying .so files to the designated directory."
+  (unless (bound-and-true-p updated-tree-sitter-libs)
+    (let* ((init-dir (file-name-as-directory
+                      (expand-file-name user-emacs-directory))) ;; Use actual init directory
+           (package-install-dir (file-name-as-directory
+                                 (expand-file-name "elpa" init-dir))) ;; Find package location
+           (tree-sitter-dir (directory-files package-install-dir t
+                                             "^tree-sitter-langs-[0-9.]+"))
+           (dest-dir (file-name-as-directory
+                      (expand-file-name "tree-sitter" init-dir)))) ;; Build destination directory path
+      (when tree-sitter-dir
+        ;; Ensure the destination directory exists
+        (unless (file-directory-p dest-dir)
+          (make-directory dest-dir t))
+        ;; Copy .so files from <tree-sitter-dir>/bin to <init-dir>/tree-sitter
+        (let ((bin-dir (expand-file-name "bin" (car tree-sitter-dir))))
+          (when (file-directory-p bin-dir)
+            (dolist (file (directory-files bin-dir nil "\\.so\\'"))
+              (let* ((source-file (expand-file-name file bin-dir))
+                     (base-name (file-name-base file)) ;; Extract base name without extension
+                     (dest-file (expand-file-name (format "libtree-sitter-%s.so" base-name) dest-dir)))
+                (copy-file source-file dest-file t))))))
+      ;; Set the variable and save it to the custom file
+      (customize-save-variable 'updated-tree-sitter-libs t))))
+
+(use-package tree-sitter-langs
   :delight
   :config
-  (volatile-highlights-mode t))
+  (setup-tree-sitter-libs))
 
-;; Set theme
-(use-package zenburn-theme
-  :config
-  (load-theme 'zenburn t))
-
-;; Set font
-(set-face-attribute 'default nil
-                    :family "DejaVu Sans Mono"
-                    :foundry "PfEd"
-                    :slant 'normal
-                    :weight 'normal
-                    :height 120
-                    :width 'normal)
-;; Set selection highlight
-(set-face-attribute 'region nil :background "gray36")
-(set-face-attribute 'highlight nil :background "dim gray")
-
-;; Add support for nice icons in graphics mode
-(use-package all-the-icons
-  :if (display-graphic-p))
-
-(use-package svg-lib
-  :if (display-graphic-p))
+(include-file "editor")
+(include-file "ui")
 
 ;; Configure completion with Helm
 (use-package helm
@@ -100,114 +107,28 @@
   (company-tooltip-limit 10)
   (company-tooltip-align-annotations t))
 
-;; Prompt for confirmation when quitting Emacs
-(setq confirm-kill-emacs 'y-or-n-p)
+;; File-specific modes (programming manguages, configs, etc)
 
-;; Move between windows with keyboard (windmove is builtin)
-(global-set-key (kbd "S-<left>")  'windmove-left)
-(global-set-key (kbd "S-<right>") 'windmove-right)  
-(global-set-key (kbd "S-<up>")    'windmove-up)  
-(global-set-key (kbd "S-<down>")  'windmove-down)
-
-;; Move windows with Ctrl + Shift + <arrow>
-(use-package buffer-move
-  :ensure t
-  :bind (("C-S-<down>"   . buf-move-down)   
-         ("C-S-<up>"     . buf-move-up)     
-         ("C-S-<left>"   . buf-move-left)   
-         ("C-S-<right>"  . buf-move-right)))
-
-(defun recompile-package (package)
-  "Recompile a specific PACKAGE."
-  (interactive "sEnter package name: ") 
-  (let ((package-dir (or (locate-library package) 
-                         (error "Package not found")))) 
-    (byte-recompile-directory (file-name-directory package-dir) 0)
-    (message "Package %s recompiled." package)))
-
-;; Configure sidebar
-(use-package neotree
-  :bind
-  ([f8] . neotree-toggle)
-  :custom
-  ((neo-theme (if (display-graphic-p) 'icons 'arrow))
-   (neo-window-fixed-size nil)
-   (neo-window-width 35)
-   (neo-window-fixed-size t)
-   (neo-show-hidden-files t))
-  :hook
-  (emacs-startup . neotree-show))
-
-;; Enable automatic parenthesis insert
-(use-package smartparens
-  :hook (prog-mode text-mode markdown-mode)
-  :bind
-  (("M-<left>" . sp-forward-barf-sexp)
-   ("M-<right>" . sp-forward-slurp-sexp))
-  :config
-  (require 'smartparens-config))
-
-;; Setup some additional custom actions
-(use-package crux
-  :bind
-  (("C-a" . crux-move-beginning-of-line)
-   ("S-<return>" . crux-smart-open-line)
-   ("C-S-<return>" . crux-smart-open-line-above)))
-
-(use-package move-text
-  :bind
-  (("C-M-<up>" . move-text-up)
-   ("C-M-<down>" . move-text-down)))
-
-(delete-selection-mode 1) ;; Delete selected text on typing
-(setq-default indent-tabs-mode nil) ;; don't use tabs to indent
-(setq-default tab-width 8) ;; but maintain correct appearance
-(setq require-final-newline t) ;; Newline at end of file
-
-;; store all backup and autosave files in the tmp dir
-(setq backup-directory-alist
-      `((".*" . ,temporary-file-directory)))
-(setq auto-save-file-name-transforms
-      `((".*" ,temporary-file-directory t)))
-
-;; revert buffers automatically when underlying files are changed externally
-(global-auto-revert-mode t)
-
-(defun include-file (file-name)
-  "Include (load) file from relative to init.el location, appending .el"
-  (load (expand-file-name (concat user-emacs-directory file-name))))
-
-;; show the name of the current function definition in the modeline
-(use-package which-func
-  :config
-  :delight
-  (which-function-mode 1))
-
-(use-package which-key
-  :delight
-  :custom
-  (which-key-idle-delay 0.5)
-  (which-key-popup-type 'minibuffer)
-  :config
-  (which-key-mode)
-  (which-key-setup-side-window-bottom))
-
-;; Highlight TODO NOTE FIXME
-(use-package hl-todo
-  :config
-  (hl-todo-mode 1))
-
-(use-package editorconfig
-  :delight
-  :config
-  (editorconfig-mode 1))
-
-;; Configure Org mode (in org.el)
 (include-file "org")
 
-;; Configure generic LSP
+;; LSP and languages with LSP support
 (include-file "lsp")
-
-;; ;; Configure Rust mode (in rust.el)
 (include-file "rust")
 
+;; Configuration files
+(use-package toml-mode
+  :mode "\\.toml\\'"
+  :hook (toml-mode . subword-mode))
+
+(use-package jsonian
+  :mode ("\\.jsonc?\\'" . jsonian-mode)
+  :hook (jsonian-mode . subword-mode)
+  :custom
+  (jsonian-indentation 4)
+  :config
+  (crux-with-region-or-buffer jsonian-format-region))
+
+(use-package yaml-pro
+  :mode ("\\.ya?ml\\'" . yaml-ts-mode)
+  :hook ((yaml-ts-mode . subword-mode)
+         (yaml-ts-mode . yaml-pro-ts-mode)))
