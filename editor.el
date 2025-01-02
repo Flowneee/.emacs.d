@@ -9,12 +9,23 @@
                     :weight 'normal
                     :height 120
                     :width 'normal)
+
 ;; Set selection highlight
 (set-face-attribute 'region nil :background "gray36")
 (set-face-attribute 'highlight nil :background "dim gray")
 
 (blink-cursor-mode -1)
 (global-hl-line-mode +1) ;; Highlight current line
+
+;; Enable some "dangerous" commands
+(put 'upcase-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
+
+;; Remap some commands
+(keymap-global-set "<backspace>" 'backward-delete-char-untabify)
+(keymap-global-set "<delete>" 'delete-forward-char)
+(keymap-global-set "M-<backspace>" 'backward-kill-word)
+(keymap-global-set "M-<delete>" 'kill-word)
 
 ;; Highlight text added by some operation
 (use-package volatile-highlights
@@ -24,10 +35,10 @@
 
 ;; Enable automatic parenthesis insert
 (use-package smartparens
+  :delight
   :hook (prog-mode text-mode markdown-mode)
-  :bind
-  (("M-<left>" . sp-forward-barf-sexp)
-   ("M-<right>" . sp-forward-slurp-sexp))
+  :bind (("M-S-<left>" . sp-forward-barf-sexp)
+         ("M-S-<right>" . sp-forward-slurp-sexp))
   :config
   (require 'smartparens-config))
 
@@ -36,12 +47,15 @@
   :bind
   (("C-a" . crux-move-beginning-of-line)
    ("S-<return>" . crux-smart-open-line)
-   ("C-S-<return>" . crux-smart-open-line-above)))
+   ("C-S-<return>" . crux-smart-open-line-above))
+  :config
+  (crux-with-region-or-line kill-region) ;; Make C-w operate on line if no region selected
+  )
 
 (use-package move-text
   :bind
-  (("C-M-<up>" . move-text-up)
-   ("C-M-<down>" . move-text-down)))
+  (("M-S-<up>" . move-text-up)
+   ("M-S-<down>" . move-text-down)))
 
 (delete-selection-mode 1) ;; Delete selected text on typing
 (setq-default indent-tabs-mode nil) ;; don't use tabs to indent
@@ -80,7 +94,7 @@
 ;; Move windows with Ctrl + Shift + <arrow>
 (use-package buffer-move
   :ensure t
-  :bind (("C-S-<down>"   . buf-move-down)   
+  :bind (("C-S-<down>"   . buf-move-down)
          ("C-S-<up>"     . buf-move-up)     
          ("C-S-<left>"   . buf-move-left)   
          ("C-S-<right>"  . buf-move-right)))

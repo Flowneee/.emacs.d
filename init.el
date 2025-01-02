@@ -1,19 +1,20 @@
-;; TODO AFTER FRESH INSTALL:
-;;
-;; * run M-x all-the-icons-install-fonts
-
-(setq inhibit-startup-screen t)
-
 ;; Setup file for saving custom settings
 (setq custom-file (expand-file-name "custom.el" (file-name-directory user-init-file)))
+(unless (file-exists-p custom-file)
+  (with-temp-buffer
+    (write-file custom-file)))
 (load custom-file)
+
+;; Disable welcome screen
+(setq inhibit-startup-screen t)
 
 ;; Initialize package.el and add MELPA to list of repos
 (require 'package)
 (setq package-archives
       '(("melpa" . "https://melpa.org/packages/")
         ("elpa" . "https://elpa.gnu.org/packages/")))
-(setq package-native-compile t)
+(setq package-native-compile t
+      package-install-upgrade-built-in t) ;; Allow to upgrade built-in packages from repo
 (package-initialize)
 (unless package-archive-contents
   (package-refresh-contents))
@@ -29,22 +30,35 @@
 ;; Automatically update ELPA keys
 (use-package gnu-elpa-keyring-update)
 
+;; Load environment variables into Emacs
+(use-package exec-path-from-shell
+  :demand t
+  :config (exec-path-from-shell-initialize))
+
 ;; Configure :delight (mode name hiding or customization) for use-package
 (use-package delight)
 
+;; Hide some built-in modes, use use-package to automatically ensure modes are loaded
+(use-package subword
+  :ensure nil
+  :delight)
+(use-package eldoc
+  :ensure nil
+  :delight)
+
 (defun include-file (file-name)
-  "Include and execute file from relative to init.el location, appending .el"
+  "Include and execute FILE-NAME.el from relative to init.el location."
   (load (expand-file-name (concat user-emacs-directory file-name))))
 
 (defun recompile-package (package)
   "Recompile a specific PACKAGE."
-  (interactive "sEnter package name: ") 
-  (let ((package-dir (or (locate-library package) 
-                         (error "Package not found")))) 
+  (interactive "sEnter package name: ")
+  (let ((package-dir (or (locate-library package)
+                         (error "Package not found"))))
     (byte-recompile-directory (file-name-directory package-dir) 0)
     (message "Package %s recompiled." package)))
 
-;; Prepare tree-sitter shared libs
+;; Prepare tree-sitter shared libs for built-in tree-sitter support
 ;; On Arch Linux some libs are also available in repos, but it is easier to install them
 ;; all in one step regardless of distro.
 (defun setup-tree-sitter-libs ()
@@ -76,7 +90,8 @@
 (use-package tree-sitter-langs
   :delight
   :config
-  (setup-tree-sitter-libs))
+  (when (version<= "29.0" emacs-version)
+    (setup-tree-sitter-libs)))
 
 (include-file "editor")
 (include-file "ui")
@@ -84,28 +99,36 @@
 ;; Configure completion with Helm
 (use-package helm
   :demand t ;; ensure helm is loaded immediately even with triggers present
+  :delight
   :custom
   ((helm-mode-fuzzy-match t)
    (helm-completion-in-region-fuzzy-match t)
    (helm-M-x-fuzzy-match t)
    (helm-buffers-fuzzy-matching t)
    (helm-recentf-fuzzy-match t)
-   (helm-split-window-inside-p t)) ;; Ensure helm uses split when windows vertically split
+   (helm-split-window-inside-p t) ;; Ensure helm uses split when windows vertically split
+   (helm-completion-style 'helm-fuzzy))
   :bind
   (("M-x" . helm-M-x)
-   ("M-y" . helm-show-kill-ring)
-   ("M-TAB" . helm-completion-at-point))
+   ("M-y" . helm-show-kill-ring))
   :config
   (helm-mode 1)) ;; Enable Helm globally
 
 ;; Configure company for autocompletion
 (use-package company
-  :hook (prog-mode . company-mode)
+  :delight
   :custom
   (company-idle-delay 0.2)
   (company-minimum-prefix-length 1)
   (company-tooltip-limit 10)
-  (company-tooltip-align-annotations t))
+  (company-tooltip-align-annotations t)
+  :config
+  (global-company-mode))
+
+;; Configure syntax checking
+(use-package flycheck
+  :config
+  (global-flycheck-mode))
 
 ;; File-specific modes (programming manguages, configs, etc)
 
@@ -123,6 +146,7 @@
 (use-package jsonian
   :mode ("\\.jsonc?\\'" . jsonian-mode)
   :hook (jsonian-mode . subword-mode)
+  :after crux
   :custom
   (jsonian-indentation 4)
   :config
@@ -132,3 +156,15 @@
   :mode ("\\.ya?ml\\'" . yaml-ts-mode)
   :hook ((yaml-ts-mode . subword-mode)
          (yaml-ts-mode . yaml-pro-ts-mode)))
+
+(use-package nxml-mode
+  :ensure nil ;; Built-in package, for some reason breaks on :ensure t
+  :mode "\\.xml\\'"  ;; Detect XML files based on the extension as well as XML prolog
+  :magic "<\\?xml"
+  :custom
+  ((nxml-child-indent 4)
+   (nxml-attribute-indent 4)
+   (nxml-auto-insert-xml-declaration-flag nil)
+   (nxml-bind-meta-tab-to-complete-flag t)
+   (nxml-slash-auto-complete-flag t)))
+

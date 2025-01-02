@@ -40,7 +40,11 @@
 
 ;; Add support for nice icons in graphics mode
 (use-package all-the-icons
-  :if (display-graphic-p))
+  :if (display-graphic-p)
+  :config
+  (unless (bound-and-true-p all-the-icons-installed)
+    (all-the-icons-install-fonts)
+    (customize-save-variable 'all-the-icons-installed t)))
 
 (use-package svg-lib
   :if (display-graphic-p))
