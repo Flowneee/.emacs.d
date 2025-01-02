@@ -95,35 +95,25 @@
 
 (include-file "editor")
 (include-file "ui")
+(include-file "completion")
 
-;; Configure completion with Helm
-(use-package helm
-  :demand t ;; ensure helm is loaded immediately even with triggers present
-  :delight
-  :custom
-  ((helm-mode-fuzzy-match t)
-   (helm-completion-in-region-fuzzy-match t)
-   (helm-M-x-fuzzy-match t)
-   (helm-buffers-fuzzy-matching t)
-   (helm-recentf-fuzzy-match t)
-   (helm-split-window-inside-p t) ;; Ensure helm uses split when windows vertically split
-   (helm-completion-style 'helm-fuzzy))
-  :bind
-  (("M-x" . helm-M-x)
-   ("M-y" . helm-show-kill-ring))
-  :config
-  (helm-mode 1)) ;; Enable Helm globally
-
-;; Configure company for autocompletion
-(use-package company
-  :delight
-  :custom
-  (company-idle-delay 0.2)
-  (company-minimum-prefix-length 1)
-  (company-tooltip-limit 10)
-  (company-tooltip-align-annotations t)
-  :config
-  (global-company-mode))
+;; ;; Configure completion with Helm
+;; (use-package helm
+;;   :demand t ;; ensure helm is loaded immediately even with triggers present
+;;   :delight
+;;   :custom
+;;   ((helm-mode-fuzzy-match t)
+;;    (helm-completion-in-region-fuzzy-match t)
+;;    (helm-M-x-fuzzy-match t)
+;;    (helm-buffers-fuzzy-matching t)
+;;    (helm-recentf-fuzzy-match t)
+;;    (helm-split-window-inside-p t) ;; Ensure helm uses split when windows vertically split
+;;    (helm-completion-style 'helm-fuzzy))
+;;   :bind
+;;   (("M-x" . helm-M-x)
+;;    ("M-y" . helm-show-kill-ring))
+;;   :config
+;;   (helm-mode 1)) ;; Enable Helm globally
 
 ;; Configure syntax checking
 (use-package flycheck
