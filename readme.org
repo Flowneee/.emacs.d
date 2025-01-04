@@ -3,6 +3,12 @@ My personal Emacs configuration (WIP) which I use for editing Rust code with LSP
 
 Originally I used Prelude, but it become too overburdened so I decided to redo everything from beginning. However a lot of stuff I copied from Prelude, especially keybindings.
 
+* Installation
+
+Should work out-of-box on Emacs 29.4 and higher on Linux.
+
+First launch will take time to install all packages (I :ensure all mentioned packages on purpose). Installation will download few additional resources: tree-sitter .so files from GitHub (using tree-sitter-langs package) and nerd-fonts (will ask interactively if needed to be download). After installing all packages will be byte-compiled in background, potentially producing warnings in separate window (can be ignored).
+
 * Keybindings
 ** Navigation
 | Description                 | Keybindings                                   | Comment                           |
@@ -17,6 +23,7 @@ Originally I used Prelude, but it become too overburdened so I decided to redo e
 | Move to next window         | C-x o                                         |                                   |
 | Move between windows        | S-<left>, S-<right>, S-<up>, S-<down>         | In Org mode prefixed with 'C-x w' |
 | Swap buffers between window | C-S-<left>, C-S-<right>, C-S-<up>, C-S-<down> | In Org mode prefixed with 'C-x w' |
+| Switch buffer               | C-x <left> (previous), C-x <right> (next)     |                                   |
 ** Help
 | Description           | Keybindings |
 |-----------------------+-------------|

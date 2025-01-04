@@ -8,6 +8,9 @@
 ;; Disable welcome screen
 (setq inhibit-startup-screen t)
 
+;; Allow execute M-x inside minibuffer
+(setq enable-recursive-minibuffers t)
+
 ;; Initialize package.el and add MELPA to list of repos
 (require 'package)
 (setq package-archives

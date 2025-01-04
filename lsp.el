@@ -5,6 +5,8 @@
   :hook (lsp-mode . flycheck-mode)
   :init
   (setq lsp-keymap-prefix "C-c C-l")
+  :bind (:map lsp-mode-map
+              ([remap xref-find-apropos] . consult-lsp-symbols))
   :custom
   ((lsp-enable-snippet t)
    (lsp-log-io nil)
@@ -16,19 +18,17 @@
   :commands lsp-ui-mode
   :hook (lsp-mode . lsp-ui-mode)
   :custom
-  (lsp-ui-doc-enable t)
-  (lsp-ui-sideline-enable t)
-  (lsp-ui-sideline-show-code-actions t)
-  (lsp-ui-sideline-show-diagnostics t)
-  (lsp-ui-sideline-show-hover t)
-  (lsp-ui-sideline-wait-for-all-symbols nil)
-  (lsp-ui-peek-enable t))
+  ((lsp-ui-doc-enable t)
+   (lsp-ui-sideline-enable t)
+   (lsp-ui-sideline-show-code-actions t)
+   (lsp-ui-sideline-show-diagnostics t)
+   (lsp-ui-sideline-show-hover t)
+   (lsp-ui-sideline-wait-for-all-symbols nil)
+   (lsp-ui-peek-enable t)))
 
-(use-package helm-lsp
-  :requires (lsp-mode helm)
-  :commands helm-lsp-workspace-symbol
-  :custom
-  (helm-lsp-fuzzy-match t))
+(use-package consult-lsp
+  :after consult lsp-mode
+  :commands consult-lsp-symbols)
 
 ;; TODO: configure DAP mode
 ;; for now it mostly broken:

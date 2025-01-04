@@ -13,6 +13,7 @@
   (rustic-format-on-save t))
 
 (use-package cargo
+  :delight
   :commands cargo-minor-mode)
 
 ;; TODO: check on later versions of Emacs if built-in treesit becomes better with Rust

@@ -10,5 +10,8 @@ custom.el
 eln-cache
 elpa
 eshell/
+projects
+readme.*
+!readme.org
 tramp
 tree-sitter/

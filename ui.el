@@ -38,13 +38,13 @@
 (add-hook 'kill-emacs-query-functions ;; Check unsaved customizations
           'custom-prompt-customize-unsaved-options)
 
-;; Add support for nice icons in graphics mode
-(use-package all-the-icons
-  :if (display-graphic-p)
+;; TODO: figure out why icons are weird when Emacs in terminal or disable them with if display-graphic-p
+;; Add support for Nerd icons in graphics mode
+(use-package nerd-icons
   :config
-  (unless (bound-and-true-p all-the-icons-installed)
-    (all-the-icons-install-fonts)
-    (customize-save-variable 'all-the-icons-installed t)))
+  (unless (bound-and-true-p nerd-icons-installed)
+    (nerd-icons-install-fonts)
+    (customize-save-variable 'nerd-icons-installed t)))
 
 (use-package svg-lib
   :if (display-graphic-p))
@@ -54,7 +54,7 @@
   :bind
   ([f8] . neotree-toggle)
   :custom
-  ((neo-theme (if (display-graphic-p) 'icons 'arrow))
+  ((neo-theme 'nerd-icons)
    (neo-window-fixed-size nil)
    (neo-window-width 35)
    (neo-window-fixed-size t)

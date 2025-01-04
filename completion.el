@@ -1,3 +1,5 @@
+;; NOTE: if fuzzy-matching not working, most probable cause is orderless not being loaded correctly
+
 ;; Configure company for autocompletion
 (use-package company
   :demand t
@@ -16,9 +18,9 @@
 ;; Vertical completion in separate buffer
 (use-package vertico
   :demand t
-  :init (vertico-mode)
   :custom (vertico-cycle t)
   :config
+  (vertico-mode)
   (setq completion-in-region-function ;; Use vertico in for completion-in-region (M-TAB)
         (lambda (&rest args)
           (apply (if vertico-mode
@@ -29,21 +31,33 @@
 ;; Show additional information (e.g., file size, git status) in the minibuffer
 (use-package marginalia
   :after vertico
-  :init
+  :custom
+  ((marginalia-align 'left))
+  :config
   (marginalia-mode))
+
+;; Add icons to marginalia hints
+(use-package nerd-icons-completion
+  :after marginalia nerd-icons
+  :config
+  (nerd-icons-completion-mode)
+  (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup))
 
 ;; Fuzzy-matching in completion buffers
 (use-package orderless
   :after vertico company
   :custom
   ((completion-styles '(orderless basic))  ;; Enable fuzzy matching with Orderless
-   (completion-category-defaults nil)
-   (completion-category-overrides '((file (styles partial-completion))))))  ;; Partial completion for file names
+   (completion-category-defaults nil)))
+;;   (completion-category-overrides '((file (styles partial-completion))))))  ;; Partial completion for file names
 
 ;; TODO: configure narrowing, search and other stuff
 ;; Advanced search and complete commands
 (use-package consult
   :after vertico
+  :custom
+  ((xref-show-xrefs-function #'consult-xref) ;; Replace xref default UI with consult
+   (xref-show-definitions-function #'consult-xref))
   :bind
   (("M-y" . consult-yank-pop) ;; Yank (kill-ring)
    ("C-x b" . consult-buffer) ;; Buffer switching
