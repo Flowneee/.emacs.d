@@ -9,6 +9,19 @@ Should work out-of-box on Emacs 29.4 and higher on Linux.
 
 First launch will take time to install all packages (I :ensure all mentioned packages on purpose). Installation will download few additional resources: tree-sitter .so files from GitHub (using tree-sitter-langs package) and nerd-fonts (will ask interactively if needed to be download). After installing all packages will be byte-compiled in background, potentially producing warnings in separate window (can be ignored).
 
+** Optional steps
+
++ if not installed nerd-font when prompted, install it manually;
++ install [[*emacs-lsp-booster][emacs-lsp-booster]] somewhere in $PATH.
+
+* LSP
+
+** emacs-lsp-booster
+
+LSP mode attempts to use [[https://github.com/blahgeek/emacs-lsp-booster][emacs-lsp-booster]] to enhance LSP experience, falling back to original command if emacs-lsp-booster executable not found in $PATH.
+
+Note that this integration modifies either 'json-parse-buffer or 'json-read wrapping it in special code allowing it to parse elisp bytecode.
+
 * Keybindings
 ** Navigation
 | Description                 | Keybindings                                   | Comment                           |
