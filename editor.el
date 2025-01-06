@@ -95,6 +95,13 @@
 (use-package buffer-move
   :ensure t
   :bind (("C-S-<down>"   . buf-move-down)
-         ("C-S-<up>"     . buf-move-up)     
+         ("C-S-<up>"     . buf-move-up)
          ("C-S-<left>"   . buf-move-left)   
          ("C-S-<right>"  . buf-move-right)))
+
+;; Highlight indentations in programming modes
+(use-package highlight-indent-guides
+  :hook prog-mode
+  :custom ((highlight-indent-guides-method 'character)
+           (highlight-indent-guides-responsive 'nil)
+           (highlight-indent-guides-auto-character-face-perc 40)))

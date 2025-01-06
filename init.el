@@ -93,30 +93,17 @@
 (use-package tree-sitter-langs
   :delight
   :config
+  ;; If used with Emacs 29 or newer, copy downloaded libraries to location expected by
+  ;; built-in tree-sitter support.
   (when (version<= "29.0" emacs-version)
     (setup-tree-sitter-libs)))
+
+;; Disable Ispell integration with debian
+(remove-hook 'after-init-hook 'debian-ispell-set-default-dictionary)
 
 (include-file "editor")
 (include-file "ui")
 (include-file "completion")
-
-;; ;; Configure completion with Helm
-;; (use-package helm
-;;   :demand t ;; ensure helm is loaded immediately even with triggers present
-;;   :delight
-;;   :custom
-;;   ((helm-mode-fuzzy-match t)
-;;    (helm-completion-in-region-fuzzy-match t)
-;;    (helm-M-x-fuzzy-match t)
-;;    (helm-buffers-fuzzy-matching t)
-;;    (helm-recentf-fuzzy-match t)
-;;    (helm-split-window-inside-p t) ;; Ensure helm uses split when windows vertically split
-;;    (helm-completion-style 'helm-fuzzy))
-;;   :bind
-;;   (("M-x" . helm-M-x)
-;;    ("M-y" . helm-show-kill-ring))
-;;   :config
-;;   (helm-mode 1)) ;; Enable Helm globally
 
 ;; Configure syntax checking
 (use-package flycheck
