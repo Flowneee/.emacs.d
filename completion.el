@@ -1,5 +1,9 @@
 ;; NOTE: if fuzzy-matching not working, most probable cause is orderless not being loaded correctly
 
+;; Ignore case for when selecting file or buffer to open
+(setq read-file-name-completion-ignore-case t
+      read-buffer-completion-ignore-case t)
+
 ;; Configure company for autocompletion
 (use-package company
   :demand t
@@ -21,6 +25,7 @@
   :custom (vertico-cycle t)
   :config
   (vertico-mode)
+  (vertico-mouse-mode)  ;; Support mouse in vertico buffers
   (setq completion-in-region-function ;; Use vertico in for completion-in-region (M-TAB)
         (lambda (&rest args)
           (apply (if vertico-mode
@@ -48,8 +53,9 @@
   :after vertico company
   :custom
   ((completion-styles '(orderless basic))  ;; Enable fuzzy matching with Orderless
-   (completion-category-defaults nil)))
-;;   (completion-category-overrides '((file (styles partial-completion))))))  ;; Partial completion for file names
+   (completion-category-defaults nil)
+   (completion-category-overrides '((file (styles partial-completion))))))  ;; Partial completion for file names
+
 
 ;; TODO: configure narrowing, search and other stuff
 ;; Advanced search and complete commands
@@ -61,6 +67,5 @@
   :bind
   (("M-y" . consult-yank-pop) ;; Yank (kill-ring)
    ("C-x b" . consult-buffer) ;; Buffer switching
-   ("M-g g" . consult-goto-line)
-   ("C-S-s" . consult-line))) ;; Go to line
-
+   ("M-g g" . consult-goto-line) ;; Go to line
+   ("C-S-s" . consult-line))) ;; Find in buffer
