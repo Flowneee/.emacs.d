@@ -1,5 +1,4 @@
 ;; Editing-related stuff (also navigation)
-;; TODO setup undo-tree
 
 ;; Set font
 (set-face-attribute 'default nil
@@ -105,3 +104,19 @@
   :custom ((highlight-indent-guides-method 'character)
            (highlight-indent-guides-responsive 'nil)
            (highlight-indent-guides-auto-character-face-perc 40)))
+
+;; Hide code blocks
+(use-package hideshow
+  :ensure nil ;; hideshow is built-in
+  :hook (prog-mode . hs-minor-mode)
+  :bind (("C-x <up>" . hs-hide-block)
+         ("C-x <down>" . hs-show-block)
+         ("C-x S-<up>" . hs-hide-level))
+  :custom ((hs-isearch-open t)
+           (hs-hide-comments-when-hiding-all t)))
+
+;; TODO: adjust keybindings
+(use-package undo-tree
+  :config
+  (global-undo-tree-mode)
+  :bind ("C-x u" . undo-tree-visualize))

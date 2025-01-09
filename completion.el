@@ -68,4 +68,5 @@
   (("M-y" . consult-yank-pop) ;; Yank (kill-ring)
    ("C-x b" . consult-buffer) ;; Buffer switching
    ("M-g g" . consult-goto-line) ;; Go to line
-   ("C-S-s" . consult-line))) ;; Find in buffer
+   ("C-s" . consult-line) ;; Find in buffer
+   ("C-S-s" . isearch-forward))) ;; Remap default forward search
