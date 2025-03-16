@@ -1,3 +1,11 @@
+;; Change temporary directory to have emacs/ directory inside it and use new path to store
+;; all temporary data Emacs needed.
+(setq temporary-file-directory
+      (let ((dir (expand-file-name "emacs" temporary-file-directory)))
+        (unless (file-exists-p dir)
+          (make-directory dir t))
+        dir))
+
 ;; Setup file for saving custom settings
 (setq custom-file (expand-file-name "custom.el" (file-name-directory user-init-file)))
 (unless (file-exists-p custom-file)

@@ -1,5 +1,6 @@
 (use-package org
   :defer t
+  :requires htmlize
   :mode ("\\.org\\'" . org-mode)
   :hook ((org-mode . org-indent-mode)
          (org-mode . org-custom-bindings-hook))
@@ -9,7 +10,8 @@
   :custom ((org-list-indent-offset 2)
            (indent-tabs-mode nil)
            (org-log-done t)
-           (org-log-into-drawer t))
+           (org-log-into-drawer t)
+           (org-export-with-sub-superscripts '{}))
   :config
   ;; Define custom keymap for windmove and bufmove in Org mode
   (defvar custom-org-keymap (make-sparse-keymap)
@@ -29,3 +31,5 @@
     "Set up custom bindings for Org mode."
     (define-key org-mode-map (kbd "C-x w") custom-org-keymap)))
 
+(use-package htmlize
+  :defer t)

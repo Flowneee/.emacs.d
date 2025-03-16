@@ -8,9 +8,11 @@
   :hook ((rustic-mode . lsp-deferred)
          (rustic-mode . cargo-minor-mode)
          (rustic-mode . subword-mode))
-  :custom
-  (rustic-lsp-client 'lsp-mode)
-  (rustic-format-on-save t))
+  :custom ((rustic-lsp-client 'lsp-mode)
+           (lsp-rust-analyzer-library-directories
+            '("~/.cargo/registry/src" "~/.rustup/toolchains" "~/.cargo/git/checkouts")))
+  :config
+  (setq rustic-format-on-save t)) ;; For some reason doesn't work in :custom section
 
 (use-package cargo
   :delight

@@ -13,8 +13,26 @@
 (set-face-attribute 'region nil :background "gray36")
 (set-face-attribute 'highlight nil :background "dim gray")
 
-(blink-cursor-mode -1)
+(blink-cursor-mode -1) ;; Disable currsor blink
 (global-hl-line-mode +1) ;; Highlight current line
+(delete-selection-mode 1) ;; Delete selected text on typing
+(setq-default indent-tabs-mode nil) ;; don't use tabs to indent
+(setq-default tab-width 8) ;; but maintain correct appearance
+(setq require-final-newline t) ;; Newline at end of file
+
+;; store all lock files, backup and autosave files in the tmp dir
+(let ((backup-dir (expand-file-name "backups" temporary-file-directory)))
+  (unless (file-exists-p backup-dir)
+    (make-directory backup-dir t))
+  (setq backup-directory-alist `((".*" . ,backup-dir))))
+(let ((auto-save-files-dir (expand-file-name "auto-save-files" temporary-file-directory)))
+  (unless (file-exists-p auto-save-files-dir)
+    (make-directory auto-save-files-dir t))
+  (setq auto-save-file-name-transforms `((".*" ,auto-save-files-dir t))))
+(let ((lock-dir (expand-file-name "locks" temporary-file-directory)))
+  (unless (file-exists-p lock-dir)
+    (make-directory lock-dir t))
+  (setq lock-file-name-transforms `((".*" ,(concat lock-dir "/\\1") t))))
 
 ;; Enable some "dangerous" commands
 (put 'upcase-region 'disabled nil)
@@ -55,17 +73,6 @@
   :bind
   (("M-S-<up>" . move-text-up)
    ("M-S-<down>" . move-text-down)))
-
-(delete-selection-mode 1) ;; Delete selected text on typing
-(setq-default indent-tabs-mode nil) ;; don't use tabs to indent
-(setq-default tab-width 8) ;; but maintain correct appearance
-(setq require-final-newline t) ;; Newline at end of file
-
-;; store all backup and autosave files in the tmp dir
-(setq backup-directory-alist
-      `((".*" . ,temporary-file-directory)))
-(setq auto-save-file-name-transforms
-      `((".*" ,temporary-file-directory t)))
 
 ;; revert buffers automatically when underlying files are changed externally
 (global-auto-revert-mode t)
@@ -117,6 +124,12 @@
 
 ;; TODO: adjust keybindings
 (use-package undo-tree
+  :custom
+  (undo-tree-auto-save-history t)
   :config
+  (let ((undo-dir (expand-file-name "undo-tree" temporary-file-directory)))
+    (unless (file-exists-p undo-dir)
+      (make-directory undo-dir t))
+    (setq undo-tree-history-directory-alist `((".*" . ,undo-dir))))
   (global-undo-tree-mode)
   :bind ("C-x u" . undo-tree-visualize))
